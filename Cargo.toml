@@ -20,3 +20,6 @@ poseidon = { git = "https://github.com/DelphinusLab/poseidon" }
 
 [profile.dev]
 opt-level = 3
+
+[patch."https://github.com/DelphinusLab/zkWasm-prover.git"]
+zkwasm-prover = { git = "https://www.github.com/DelphinusLab/zkWasm-prover.git", branch = "oogl/k22-k23-nohugetlb" }

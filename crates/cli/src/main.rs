@@ -13,6 +13,7 @@ use command::Subcommands;
 use delphinus_host::StandardHostEnvBuilder;
 use delphinus_zkwasm::runtime::host::default_env::DefaultHostEnvBuilder;
 use delphinus_zkwasm::runtime::host::default_env::ExecutionArg;
+use delphinus_zkwasm::zkwasm_host_circuits::host::db::MongoDB;
 
 use args::HostMode;
 use config::Config;
@@ -77,6 +78,9 @@ fn main() -> Result<()> {
                 HostMode::Standard => Box::<StandardHostEnvBuilder>::default(),
             };
 
+            let collection_name = [8u8; 32];
+            println!("collection_name: {:?}", collection_name);
+
             config.dry_run(
                 &*env_builder,
                 &arg.wasm_image,
@@ -86,7 +90,7 @@ fn main() -> Result<()> {
                     private_inputs,
                     context_inputs,
                     indexed_witness: Rc::new(RefCell::new(HashMap::default())),
-                    tree_db: None,
+                    tree_db: Some(Rc::new(RefCell::new(MongoDB::new(collection_name, None)))),
                 },
                 arg.running_arg.context_output,
                 arg.instruction_limit,
@@ -143,6 +147,9 @@ fn main() -> Result<()> {
                 TraceBackend::Memory
             };
 
+            let collection_name = [8u8; 32];
+            println!("collection_name: {:?}", collection_name);
+
             let env_builder: Box<dyn HostEnvBuilder> = match config.host_mode {
                 HostMode::Default => Box::new(DefaultHostEnvBuilder),
                 HostMode::Standard => Box::<StandardHostEnvBuilder>::default(),
@@ -158,7 +165,7 @@ fn main() -> Result<()> {
                     private_inputs,
                     context_inputs,
                     indexed_witness: Rc::new(RefCell::new(HashMap::default())),
-                    tree_db: None,
+                    tree_db: Some(Rc::new(RefCell::new(MongoDB::new(collection_name, None)))),
                 },
                 arg.running_arg.context_output,
                 arg.mock_test,
